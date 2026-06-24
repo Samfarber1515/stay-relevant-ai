@@ -1,0 +1,19 @@
+{
+  "name": "stay-relevant-ai",
+  "version": "0.1.0",
+  "description": "A personalized weekly AI newsletter — onboarding profile in, a generated issue out. Generation runs as a background job so the request never times out.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.105.0",
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}

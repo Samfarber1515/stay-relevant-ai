@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stay Relevant — your personalized weekly AI briefing</title>
+  <style>
+    :root {
+      --bg: #ffffff; --ink: #111315; --muted: #6b7280; --line: #e5e7eb;
+      --accent: #111315; --accent-ink: #ffffff; --focus: #2563eb;
+      --ok: #16a34a; --err: #dc2626; --chip: #f3f4f6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: var(--bg); color: var(--ink); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 48px 24px 80px; }
+    h1 { font-size: 30px; letter-spacing: -0.02em; margin-bottom: 6px; }
+    .sub { color: var(--muted); margin-bottom: 36px; }
+    label.field { display: block; font-weight: 600; margin: 26px 0 8px; }
+    .hint { font-weight: 400; color: var(--muted); font-size: 14px; margin: 2px 0 10px; }
+    input[type=email], input[type=text], select {
+      width: 100%; padding: 13px 15px; font-size: 16px; font-family: inherit;
+      border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); }
+    input:focus, select:focus { outline: 2px solid var(--focus); outline-offset: 1px; }
+    .radios { display: grid; gap: 10px; }
+    .radios .hint { margin: -2px 0 6px; }
+    .radio { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+    .radio input { margin-top: 5px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+    .chip { padding: 9px 16px; border: 1px solid var(--line); border-radius: 999px;
+      background: #fff; cursor: pointer; font-size: 15px; user-select: none; transition: all .12s; }
+    .chip[aria-pressed=true] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+    .check { display: flex; align-items: center; gap: 10px; margin-top: 22px; cursor: pointer; }
+    .check input { width: 18px; height: 18px; }
+    button.submit { width: 100%; margin-top: 32px; padding: 16px; font-size: 17px; font-weight: 600;
+      font-family: inherit; border: none; border-radius: 14px; background: var(--accent);
+      color: var(--accent-ink); cursor: pointer; }
+    button.submit:disabled { opacity: .55; cursor: default; }
+    .status { margin-top: 18px; text-align: center; color: var(--muted); }
+    .status.err { color: var(--err); }
+    .bar { height: 4px; background: var(--line); border-radius: 999px; margin-top: 12px; overflow: hidden; }
+    .bar > i { display: block; height: 100%; width: 30%; background: var(--accent);
+      border-radius: 999px; animation: slide 1.4s ease-in-out infinite; }
+    @keyframes slide { 0%{margin-left:-30%} 100%{margin-left:100%} }
+    /* Issue view */
+    .issue { margin-top: 8px; }
+    .issue h2 { font-size: 24px; letter-spacing: -0.02em; margin-bottom: 4px; }
+    .issue .greet { color: var(--muted); margin-bottom: 24px; }
+    .issue section { margin-bottom: 26px; }
+    .issue section h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em;
+      color: var(--muted); margin-bottom: 12px; }
+    .issue .item { margin-bottom: 14px; }
+    .issue .item .t { font-weight: 600; }
+    .issue .build { border: 1px solid var(--line); border-radius: 14px; padding: 20px;
+      background: var(--chip); margin-bottom: 26px; }
+    .issue .build .tag { display: inline-block; font-size: 12px; font-weight: 600;
+      background: var(--accent); color: #fff; padding: 2px 10px; border-radius: 999px; margin-bottom: 10px; }
+    .issue ol { margin: 10px 0 0 18px; }
+    .issue ol li { margin-bottom: 6px; }
+    .issue .signoff { color: var(--muted); margin-top: 8px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div id="formView">
+      <h1>Stay Relevant</h1>
+      <p class="sub">A weekly AI briefing, written for exactly where you are. Tell us about you and we'll generate your first issue.</p>
+
+      <form id="form">
+        <label class="field" for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="you@company.com" required />
+
+        <label class="field" for="seniority">Seniority</label>
+        <select id="seniority" name="seniority">
+          <option>Individual contributor</option>
+          <option selected>Manager</option>
+          <option>Director</option>
+          <option>VP</option>
+          <option>C-level</option>
+          <option>Founder</option>
+        </select>
+
+        <label class="field" for="focus">Focus areas <span class="hint" style="display:inline">(comma-separated)</span></label>
+        <input type="text" id="focus" name="focus" placeholder="content marketing, growth, brand" />
+
+        <label class="field">Which is the most advanced thing you've actually done with AI?</label>
+        <div class="hint">Pick the highest one that's true for you — each rung includes the ones above it.</div>
+        <div class="radios" id="aiLevel">
+          <label class="radio"><input type="radio" name="aiLevel" value="prompts" /> I've pasted prompts into ChatGPT or Claude</label>
+          <label class="radio"><input type="radio" name="aiLevel" value="workflow" /> I've built a workflow in Zapier, Make, n8n, or a custom GPT</label>
+          <label class="radio"><input type="radio" name="aiLevel" value="code" checked /> I've shipped code that calls an API or runs in a terminal</label>
+        </div>
+
+        <label class="field">Tools you actually use</label>
+        <div class="hint">We'll only suggest "Build this week" projects using tools you've picked.</div>
+        <div class="chips" id="tools">
+          <span class="chip" role="button" tabindex="0" aria-pressed="false">ChatGPT</span>
+          <span class="chip" role="button" tabindex="0" aria-pressed="false">Claude.ai</span>
+          <span class="chip" role="button" tabindex="0" aria-pressed="false">Notion AI</span>
+          <span class="chip" role="button" tabindex="0" aria-pressed="false">Google Workspace AI</span>
+          <span class="chip" role="button" tabindex="0" aria-pressed="false">Zapier</span>
+          <span class="chip" role="button" tabindex="0" aria-pressed="false">Make.com</span>
+          <span class="chip" role="button" tabindex="0" aria-pressed="false">Lindy</span>
+          <span class="chip" role="button" tabindex="0" aria-pressed="false">n8n</span>
+          <span class="chip" role="button" tabindex="0" aria-pressed="false">Custom GPTs</span>
+          <span class="chip" role="button" tabindex="0" aria-pressed="false">v0</span>
+          <span class="chip" role="button" tabindex="0" aria-pressed="false">Cursor</span>
+          <span class="chip" role="button" tabindex="0" aria-pressed="false">Claude Code</span>
+          <span class="chip" role="button" tabindex="0" aria-pressed="false">Replit Agents</span>
+          <span class="chip" role="button" tabindex="0" aria-pressed="false">Bubble</span>
+        </div>
+
+        <label class="field">Cadence</label>
+        <div class="radios">
+          <label class="radio"><input type="radio" name="cadence" value="weekly" checked /> Weekly (Sunday)</label>
+          <label class="radio"><input type="radio" name="cadence" value="biweekly" /> Every other Sunday</label>
+          <label class="radio"><input type="radio" name="cadence" value="monthly" /> Monthly digest</label>
+        </div>
+
+        <label class="check"><input type="checkbox" id="includeProject" checked /> Include a "Build this week" project (optional, ~15–90 min)</label>
+
+        <button class="submit" type="submit" id="submitBtn">Generate my first issue</button>
+        <div class="status hidden" id="status"></div>
+        <div class="bar hidden" id="bar"><i></i></div>
+      </form>
+    </div>
+
+    <div id="issueView" class="hidden"></div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
